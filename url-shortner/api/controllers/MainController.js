@@ -11,7 +11,7 @@ const getAllUrlsPage = (req, res) => {
 
 const fetchAllUrls = async (req, res) => {
     try {
-        const urls = await Urls.find({ select: ['shortened_url', 'uid'] });
+        const urls = await Urls.find({ select: ['shortened_url', 'createdAt'] });
 
         await urls.forEach(async (item, index) => {
 
