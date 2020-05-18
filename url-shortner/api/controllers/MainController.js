@@ -64,7 +64,9 @@ const postCreateShortenedUrl = async (req, res) => {
 
         const uid = uuidv4();
 
-        const serverUrl = 'http://localhost:1337/url/' + uid;
+        const BASE_URL = "https://gentle-everglades-32815.herokuapp.com/";
+
+        const serverUrl = BASE_URL + uid;
 
         const shortenedUrl = await urlShortner.shorten(serverUrl);
 
