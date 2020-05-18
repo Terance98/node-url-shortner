@@ -1,0 +1,47 @@
+<div id="main-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">No.</th>
+                <th scope="col">Shortened Url</th>
+                <th scope="col">Total Visits</th>
+                <th scope="col">Last Hour Visits</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+
+        </tbody>
+    </table>
+</div>
+
+<style>
+    #main-container {
+        margin: 200px auto;
+        width: 80%;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+
+<script>
+    const GET_ALL_URLS_API_ENDPOINT = '/fetch-all-urls';
+
+    axios.get(GET_ALL_URLS_API_ENDPOINT)
+        .then(({ data }) => {
+            console.log(data);
+            if (data.success) {
+                const allUrls = data.data;
+
+                let k = 1;
+                for (let urlItem of allUrls) {
+                    const tableBody = document.getElementById('table-body');
+                    tableBody.innerHTML += `<tr>
+                                            <th scope="row">${k++}</th>
+                                            <td><a href="${urlItem.shortened_url}" target="_blank">${urlItem.shortened_url}</a></td>
+                                            <td>${urlItem.count}</td>
+                                            <td>${urlItem.lastHourCount}</td>
+                                        </tr>`;
+                }
+            }
+        });
+</script>

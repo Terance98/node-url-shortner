@@ -1,0 +1,51 @@
+<div id="main-container">
+    <h3>Enter the url:</h3>
+    <input id="actual-url" class="form-control form-control-lg" type="text" placeholder="Paste the url here">
+    <button id="shorten-btn" class="btn btn-outline-primary">Shorten</button>
+    <input  id="shortened-url" class="form-control form-control-lg" type="text" disabled hidden>
+
+</div>
+
+<style>
+    #main-container {
+        margin: 200px auto;
+        width: 40%;
+    }
+
+    .form-control-lg {
+        margin: auto;
+    }
+
+    /* h3{
+        text-align: center;
+    } */
+    button {
+        margin-top: 20px;
+    }
+
+    #shortened-url {
+        /* display: none; */
+        margin-top: 20px;
+    }
+</style>
+
+<script>
+
+    const CREATE_SHORTENED_URL_API_ENDPOINT = '/create-shortened-url';
+
+    document.getElementById('shorten-btn').onclick = () => {
+        const actualUrl = document.getElementById('actual-url').value;
+
+        const queryObj = {
+            actualUrl : actualUrl
+        }
+
+        axios.post(CREATE_SHORTENED_URL_API_ENDPOINT, queryObj )
+        .then(({data}) => {
+            // console.log(data);
+            const shortenedUrlElem = document.getElementById('shortened-url');
+            shortenedUrlElem.setAttribute('value', data.data.shortened_url);
+            shortenedUrlElem.hidden = false;
+        });
+    }
+</script>
