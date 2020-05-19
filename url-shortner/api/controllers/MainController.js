@@ -11,31 +11,22 @@ const getAllUrlsPage = (req, res) => {
 
 const fetchAllUrls = async (req, res) => {
     try {
-        const urls = await Urls.find({ select: ['shortened_url', 'createdAt'] });
+        var urls = await Urls.find({}).populate('visits');
+        const presetTimeStamp = new Date().getTime();
+        const lastHourTimeStamp = presetTimeStamp - 3600000;
+        const resultObj = urls.map(item => {
+            const obj = {};
+            obj.shortened_url = item.shortened_url;
+            obj.createdAt = item.createdAt;
+            obj.count = item.visits.length;
+            obj.lastHourCount = item.visits.filter(elem => elem.createdAt > lastHourTimeStamp).length;
+            return obj;
+        });
 
-        await urls.forEach(async (item, index) => {
-
-            const totalVisits = await Visits.find({ key: item.id });
-            const count = totalVisits.length;
-            item.count = count;
-
-
-            const presetTimeStamp = new Date().getTime();
-            const lastHourTimeStamp = presetTimeStamp - 3600000;
-
-            const lastHourVisits = await Visits.find({ key: item.id, createdAt: { '>': lastHourTimeStamp } });
-            const lastHourVisitsCount = lastHourVisits.length;
-
-            item.lastHourCount = lastHourVisitsCount;
-
-
-            if (index === urls.length - 1) {
-                res.ok({
-                    success: true,
-                    message: 'Returning all the shortened URLs data',
-                    data: urls
-                });
-            }
+        res.ok({
+            success: true,
+            message: 'Returning all the shortened URLs data',
+            data: resultObj
         });
     } catch (err) {
         console.log(err);
@@ -64,9 +55,7 @@ const postCreateShortenedUrl = async (req, res) => {
 
         const uid = uuidv4();
 
-        const BASE_URL = "https://gentle-everglades-32815.herokuapp.com/";
-
-        const serverUrl = BASE_URL + uid;
+        const serverUrl = 'http://localhost:1337/url/' + uid;
 
         const shortenedUrl = await urlShortner.shorten(serverUrl);
 
